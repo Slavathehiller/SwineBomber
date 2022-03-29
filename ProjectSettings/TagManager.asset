@@ -6,8 +6,8 @@ TagManager:
   tags:
   - EdgeOfMap
   - Bomb
-  - Enemy
   - Boss
+  - Dog
   layers:
   - Default
   - TransparentFX

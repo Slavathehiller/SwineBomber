@@ -10,25 +10,25 @@ public class Player : Entity
     public float bombRestoreTime = 5;
     public Image bombRestoreIndicator;
     public Image harmIndicator;
+    public Image holdIndicator;
     private bool isHarmed;
     readonly float harmTime = 5f;
     IEnumerator harmCoroutine;
     public Ending endWindow;
+    bool isHold;
+    float holdTime = 3f;
+    public AudioClip screamClip;
 
     public float CurrentSpeed
     {
         get
         {
+            if (isHold)
+                return 0;
             if (isHarmed)
                 return 5;
             return 10;
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
     }
 
     // Update is called once per frame
@@ -39,7 +39,7 @@ public class Player : Entity
 
     public void LayBomb()
     {
-        if (bombAvailable)
+        if (bombAvailable && !isHold)
         {
             var bombInstance = Instantiate(bomb);
             bombInstance.transform.position = transform.position;
@@ -49,6 +49,7 @@ public class Player : Entity
 
     public void GetHarm()
     {
+        audioSource.PlayOneShot(screamClip);
         if (harmCoroutine != null)
             StopCoroutine(harmCoroutine);
         harmCoroutine = Harm();
@@ -93,5 +94,28 @@ public class Player : Entity
         {
             endWindow.EndGame(false);
         }
+        if (collision.gameObject.tag == "Dog")
+        {
+            GetHold();            
+        }
     }
+
+    public void GetHold()
+    {
+        audioSource.PlayOneShot(screamClip);
+        StartCoroutine(Hold());
+    }
+
+   IEnumerator Hold()
+    {
+        isHold = true;
+        holdIndicator.fillAmount = 1;
+        for (var i = 0; i < 100; i += 5)
+        {
+            yield return new WaitForSeconds(holdTime / 20);
+            holdIndicator.fillAmount -= 0.05f;
+        }
+        isHold = false;
+    }
+
 }

@@ -10,10 +10,14 @@ public class Entity : MonoBehaviour
     public Sprite LeftSprite;
     public Sprite UpSprite;
     public Sprite DownSprite;
+
+    protected AudioSource audioSource;
+
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame

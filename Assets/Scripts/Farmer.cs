@@ -14,9 +14,12 @@ public class Farmer : Enemy
 
     public Ending endWindow;
 
-    bool isEnraged;
+    public AudioClip screamClip;
 
-    IEnumerator calmCoroutine;
+    private bool isEnraged;
+
+    private IEnumerator calmCoroutine;
+
 
     readonly float rageLevelSurplus =25f;
     readonly float rageLevelDecrease = 0.5f;
@@ -31,6 +34,8 @@ public class Farmer : Enemy
         }
         set
         {
+            if (rageLevel < value)
+                audioSource.PlayOneShot(screamClip);
             rageLevel = value;
             if (isEnraged && rageLevel < 70 && !isDirty)
             {
@@ -105,12 +110,6 @@ public class Farmer : Enemy
             SetLook(direction, EnragedRightSprite, EnragedLeftSprite, EnragedUpSprite, EnragedDownSprite);
         else
             base.Rotate(direction);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
 }

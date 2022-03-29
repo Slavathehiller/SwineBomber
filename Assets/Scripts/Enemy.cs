@@ -28,14 +28,10 @@ public class Enemy : Entity
             return 5;
         }
     }
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
 
     // Update is called once per frame
-    protected void Update()
+    protected virtual void Update()
     {
         if (isMoving)
         {
@@ -59,14 +55,12 @@ public class Enemy : Entity
         SetLook(moveDirection);
     }
 
-
-
     protected virtual void SetClean()
     {
         SetNormal();
     }
 
-    Vector3 getRandomDirection()
+    private Vector3 getRandomDirection()
     {
         var rand = Mathf.RoundToInt(Random.Range(1, 5));
         switch (rand)
@@ -100,7 +94,7 @@ public class Enemy : Entity
         changeMoveDirection(nextDirection);
     }
 
-    void changeMoveDirection(Vector3 nextDirection)
+    private void changeMoveDirection(Vector3 nextDirection)
     {
         if(nextDirection != moveDirection)
         {
@@ -109,7 +103,7 @@ public class Enemy : Entity
 
         moveDirection = nextDirection;
 
-        var timeMoving = Random.Range(1, 2);
+        var timeMoving = Random.Range(1, 3);
 
         moveCoroutine = MoveForSeconds(timeMoving);
         StartCoroutine(moveCoroutine);
@@ -132,7 +126,7 @@ public class Enemy : Entity
         }
         else
         {
-            StartMoveRandom(moveDirection);                //Если упираемся во что-то другое, меняем направление на любое другое кроме текущего
+            StartMoveRandom(moveDirection);                //Если упираемся во что-то другое, меняем направление на любое кроме текущего
         }
     }
 

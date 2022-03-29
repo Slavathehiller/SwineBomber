@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\ClickLayBomb.cs" />
     <Compile Include="Assets\Scripts\Bomb.cs" />
     <Compile Include="Assets\Scripts\Ending.cs" />
+    <Compile Include="Assets\Scripts\Dog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
