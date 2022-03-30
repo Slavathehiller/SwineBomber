@@ -33,9 +33,7 @@ public class Farmer : Enemy
             return rageLevel;
         }
         set
-        {
-            if (rageLevel < value)
-                audioSource.PlayOneShot(screamClip);
+        {            
             rageLevel = value;
             if (isEnraged && rageLevel < 70 && !isDirty)
             {
@@ -61,14 +59,15 @@ public class Farmer : Enemy
                 return 0;
 
             if (isEnraged)
-                return 7;
+                return 5;
 
-            return 5;
+            return 3;
         }
     }
 
     void SetEnraged()
     {
+        audioSource.PlayOneShot(screamClip);
         SetLook(moveDirection, EnragedRightSprite, EnragedLeftSprite, EnragedUpSprite, EnragedDownSprite);
     }
 

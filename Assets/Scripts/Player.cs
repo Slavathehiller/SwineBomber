@@ -16,7 +16,7 @@ public class Player : Entity
     IEnumerator harmCoroutine;
     public Ending endWindow;
     bool isHold;
-    float holdTime = 3f;
+    float holdTime = 4f;
     public AudioClip screamClip;
 
     public float CurrentSpeed
@@ -26,8 +26,8 @@ public class Player : Entity
             if (isHold)
                 return 0;
             if (isHarmed)
-                return 5;
-            return 10;
+                return 4;
+            return 9;
         }
     }
 

@@ -96,7 +96,9 @@ public class Enemy : Entity
 
     private void changeMoveDirection(Vector3 nextDirection)
     {
-        if(nextDirection != moveDirection)
+        if (moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+        if (nextDirection != moveDirection)
         {
             Rotate(nextDirection);
         }
@@ -116,7 +118,7 @@ public class Enemy : Entity
         isMoving = false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (moveCoroutine != null)
             StopCoroutine(moveCoroutine);
@@ -127,8 +129,8 @@ public class Enemy : Entity
         else
         {
             StartMoveRandom(moveDirection);                //Если упираемся во что-то другое, меняем направление на любое кроме текущего
-        }
     }
+}
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {

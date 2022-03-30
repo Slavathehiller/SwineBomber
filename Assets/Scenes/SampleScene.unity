@@ -2546,8 +2546,8 @@ GameObject:
   - component: {fileID: 1167644462}
   - component: {fileID: 1167644461}
   - component: {fileID: 1167644460}
-  - component: {fileID: 1167644459}
   - component: {fileID: 1167644463}
+  - component: {fileID: 1167644459}
   - component: {fileID: 1167644464}
   m_Layer: 0
   m_Name: dog
@@ -2569,9 +2569,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.78, y: -0.10999998}
+  m_Offset: {x: 0.111055136, y: -0.34}
   serializedVersion: 2
-  m_Radius: 1.896048
+  m_Radius: 1.6104976
 --- !u!114 &1167644460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2680,7 +2680,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!82 &1167644464
 AudioSource:

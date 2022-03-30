@@ -14,6 +14,7 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.IK.IKEditorManager
     - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.Tilemap.Editor.dll:
+    - UnityEditor.Tilemaps.GridBrush
     - UnityEditor.Tilemaps.GridPaintingState
     - UnityEditor.Tilemaps.GridPaletteBrushes
     - UnityEditor.Tilemaps.GridPalettes
@@ -101,13 +102,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3918}
     - Class: 114
-      Script: {instanceID: 4814}
+      Script: {instanceID: 4184}
     - Class: 114
-      Script: {instanceID: 5096}
+      Script: {instanceID: 4816}
     - Class: 114
-      Script: {instanceID: 5844}
+      Script: {instanceID: 5098}
     - Class: 114
-      Script: {instanceID: 17672}
+      Script: {instanceID: 5846}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -491,6 +492,12 @@ ScriptsOnlyBuild:
     className: AudioPlayableAsset
   - hash:
       serializedVersion: 2
+      Hash: 1baff0407dcd4a2756556e2b61437087
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Dog
+  - hash:
+      serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools.TestRunner.Callbacks
@@ -687,12 +694,6 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Ending
-  - hash:
-      serializedVersion: 2
-      Hash: 1baff0407dcd4a2756556e2b61437087
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Dog
   platform: 13
   scenePathNames:
   - Assets/Scenes/SampleScene.unity

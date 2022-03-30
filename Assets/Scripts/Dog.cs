@@ -8,7 +8,7 @@ public class Dog : Enemy
 {
 
     private bool isHold;
-    private float holdTime = 3f;
+    private float holdTime = 4f;
     public AudioClip barking;
     public AudioClip growl;
 
@@ -36,12 +36,14 @@ public class Dog : Enemy
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
             GetHold();
         }
+        else
+            base.OnCollisionEnter2D(collision);
     }
 
     private void GetHold()
