@@ -1,36 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ClickMove : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-
-    public Player player;
-    public Vector3 moveDirection;
-    private bool moving;
+    [SerializeField] private Player _player;
+    [SerializeField] private Vector3 _moveDirection;
+    private bool _moving;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        player.Rotate(moveDirection);
-        moving = true;
+        _player.Rotate(_moveDirection);
+        _moving = true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        moving = false;
+        _moving = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        if (moving)
-            player.MoveBy(player.CurrentSpeed * Time.deltaTime * moveDirection);
+        if (_moving)
+            _player.TryMoveTo(_moveDirection);
     }
 }

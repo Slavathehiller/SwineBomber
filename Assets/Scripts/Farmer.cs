@@ -1,53 +1,41 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Farmer : Enemy
 {
-    public Slider RageLevelIndicator;
-
-    public Sprite EnragedRightSprite;
-    public Sprite EnragedLeftSprite;
-    public Sprite EnragedUpSprite;
-    public Sprite EnragedDownSprite;
-
-    public Ending endWindow;
-
-    public AudioClip screamClip;
-
-    private bool isEnraged;
-
-    private IEnumerator calmCoroutine;
-
-
-    readonly float rageLevelSurplus =25f;
-    readonly float rageLevelDecrease = 0.5f;
-
-    private float rageLevel;
+    public Image RageLevelIndicator;
+    [SerializeField] private Sprite _enragedRightSprite;
+    [SerializeField] private Sprite _enragedLeftSprite;
+    [SerializeField] private Sprite _enragedUpSprite;
+    [SerializeField] private Sprite _enragedDownSprite;
+    [SerializeField] private Ending _endWindow;
+    [SerializeField] private AudioClip _screamClip;
+    private IEnumerator _calmCoroutine;
+    private readonly float _rageLevelSurplus = 25f;
+    private readonly float _rageLevelDecrease = 0.5f;
+    private float _rageLevel;
+    private bool IsEnraged
+    {
+        get
+        {
+            return _rageLevel >= 70;
+        }
+    }
 
     private float RageLevel
     {
         get
         {
-            return rageLevel;
+            return _rageLevel;
         }
         set
         {            
-            rageLevel = value;
-            if (isEnraged && rageLevel < 70 && !isDirty)
-            {
-                SetNormal();
-            }
-            if (!isEnraged && rageLevel >= 70 && !isDirty)
-            {
-                SetEnraged();
-            }
-
-            isEnraged = rageLevel >= 70;
-            RageLevelIndicator.value = rageLevel;
-            if (rageLevel >= 100)
-                endWindow.EndGame(true);
+            _rageLevel = Mathf.Clamp(value, 0, 100);
+            SetLook(MoveDirection);
+            RageLevelIndicator.fillAmount = _rageLevel / 100;
+            if (_rageLevel >= 100)
+                _endWindow.EndGame(true);
         }
     }
 
@@ -55,42 +43,56 @@ public class Farmer : Enemy
     {
         get
         {
-            if (isDirty)
+            if (IsDirty)
                 return 0;
 
-            if (isEnraged)
+            if (IsEnraged)
                 return 5;
 
             return 3;
         }
     }
 
-    void SetEnraged()
+    public override void SetLook(Vector3 direction)
     {
-        audioSource.PlayOneShot(screamClip);
-        SetLook(moveDirection, EnragedRightSprite, EnragedLeftSprite, EnragedUpSprite, EnragedDownSprite);
+        if (IsDirty)
+        {
+            SetDirty(direction);
+        }
+        else
+        {
+            if (IsEnraged)
+                SetEnraged(direction);
+            else
+                SetNormal(direction);
+        }
+    }
+
+    void SetEnraged(Vector3 direction)
+    {
+        Say(_screamClip);
+        SetLook(direction, _enragedRightSprite, _enragedLeftSprite, _enragedUpSprite, _enragedDownSprite);
     }
 
     protected override void SetClean()
     {
-        if (isEnraged)
-            SetEnraged();
+        if (IsEnraged)
+            SetEnraged(MoveDirection);
         else
-            SetNormal();
-
+            SetNormal(MoveDirection);
     }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Bomb")
+        if (collision.gameObject.TryGetComponent<Bomb>(out _))
         {
-            StopCoroutine(moveCoroutine);
-            rageLevel += rageLevelSurplus;
+            StopCoroutine(MoveCoroutine);
+            RageLevel += _rageLevelSurplus;
             StartCoroutine(BeDirty());
-            if (calmCoroutine != null)
-                StopCoroutine(calmCoroutine);
-            calmCoroutine = CalmTimer();
-            StartCoroutine(calmCoroutine);
+            if (_calmCoroutine != null)
+                StopCoroutine(_calmCoroutine);
+            _calmCoroutine = CalmTimer();
+            StartCoroutine(_calmCoroutine);
         }
     }
 
@@ -99,16 +101,15 @@ public class Farmer : Enemy
         while (RageLevel > 0)
         {
             yield return new WaitForSeconds(1f);
-            RageLevel -= rageLevelDecrease;
+            RageLevel -= _rageLevelDecrease;
         }
     }
 
     public override void Rotate(Vector3 direction)
     {
-        if (isEnraged)
-            SetLook(direction, EnragedRightSprite, EnragedLeftSprite, EnragedUpSprite, EnragedDownSprite);
+        if (IsEnraged)
+            SetLook(direction, _enragedRightSprite, _enragedLeftSprite, _enragedUpSprite, _enragedDownSprite);
         else
             base.Rotate(direction);
     }
-
 }

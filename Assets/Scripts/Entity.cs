@@ -1,30 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(AudioSource))]
+public abstract class Entity : MonoBehaviour
 {
-    public Rigidbody2D rigidBody;
-    public SpriteRenderer spriteRend;
-    public Sprite RightSprite;
-    public Sprite LeftSprite;
-    public Sprite UpSprite;
-    public Sprite DownSprite;
+    [SerializeField] private Sprite _rightSprite;
+    [SerializeField] private Sprite _leftSprite;
+    [SerializeField] private Sprite _upSprite;
+    [SerializeField] private Sprite _downSprite;
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private SpriteRenderer _spriteRend;
+    [SerializeField] protected Borders _borders;
 
-    protected AudioSource audioSource;
+    protected abstract float CurrentSpeed { get; }
 
-    // Start is called before the first frame update
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
-        audioSource = GetComponent<AudioSource>();
+        _spriteRend = GetComponent<SpriteRenderer>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
+    protected void Say(AudioClip clip)
     {
-        
+        _audioSource.PlayOneShot(clip);
     }
+
     public virtual void Rotate(Vector3 direction)
     {
         SetLook(direction);
@@ -34,38 +34,40 @@ public class Entity : MonoBehaviour
     {
         if (direction.x > 0)
         {
-            spriteRend.sprite = rightSprite;
+            _spriteRend.sprite = rightSprite;
         }
         if (direction.x < 0)
         {
-            spriteRend.sprite = leftSprite;
+            _spriteRend.sprite = leftSprite;
         }
         if (direction.y > 0)
         {
-            spriteRend.sprite = upSprite;
+            _spriteRend.sprite = upSprite;
         }
         if (direction.y < 0)
         {
-            spriteRend.sprite = downSprite;
+            _spriteRend.sprite = downSprite;
         }
     }
 
     public virtual void SetLook(Vector3 direction)
     {
-        SetLook(direction, RightSprite, LeftSprite, UpSprite, DownSprite);
+        SetLook(direction, _rightSprite, _leftSprite, _upSprite, _downSprite);
     }
 
-
-    public void MoveTo(Vector3 position)
+    public bool TryMoveTo(Vector3 direction)
     {
-        transform.position = position;
+        SetLook(direction);        
+        var offset = CurrentSpeed * Time.deltaTime * direction;
+        var nextPos = transform.position + offset;
+        nextPos.x = Mathf.Clamp(nextPos.x, _borders.Left, _borders.Right);
+        nextPos.y = Mathf.Clamp(nextPos.y, _borders.Lower, _borders.Upper);
+        if (transform.position != nextPos)
+        {
+            transform.position = nextPos;
+            return true;
+        }
+        else
+            return false;
     }
-
-    public void MoveBy(Vector3 offset)
-    {
-        var pos = transform.position;
-        pos += offset;
-        transform.position = pos;
-    }
-
 }

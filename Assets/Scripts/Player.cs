@@ -1,47 +1,40 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : Entity
 {
-    public GameObject bomb;
-    bool bombAvailable = true;
-    public float bombRestoreTime = 5;
-    public Image bombRestoreIndicator;
-    public Image harmIndicator;
-    public Image holdIndicator;
-    private bool isHarmed;
-    readonly float harmTime = 5f;
-    IEnumerator harmCoroutine;
-    public Ending endWindow;
-    bool isHold;
-    float holdTime = 4f;
-    public AudioClip screamClip;
+    [SerializeField] private GameObject _bomb;
+    [SerializeField] private Image _harmIndicator;
+    [SerializeField] private Image _holdIndicator;
+    [SerializeField] private Image _bombRestoreIndicator;
+    [SerializeField] private float _bombRestoreTime = 5;
+    [SerializeField] private Ending _endWindow;
+    [SerializeField] private AudioClip _screamClip;
+    private bool _bombAvailable = true;
+    private bool _isHarmed;
+    private readonly float _harmTime = 5f;
+    private IEnumerator _harmCoroutine;    
+    private bool _isHolding;
+    private float _holdTime = 4f;
 
-    public float CurrentSpeed
+    protected override float CurrentSpeed
     {
         get
         {
-            if (isHold)
+            if (_isHolding)
                 return 0;
-            if (isHarmed)
+            if (_isHarmed)
                 return 4;
             return 9;
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void LayBomb()
     {
-        if (bombAvailable && !isHold)
+        if (_bombAvailable && !_isHolding)
         {
-            var bombInstance = Instantiate(bomb);
+            var bombInstance = Instantiate(_bomb);
             bombInstance.transform.position = transform.position;
             StartCoroutine(DisableBomb());
         }
@@ -49,40 +42,40 @@ public class Player : Entity
 
     public void GetHarm()
     {
-        audioSource.PlayOneShot(screamClip);
-        if (harmCoroutine != null)
-            StopCoroutine(harmCoroutine);
-        harmCoroutine = Harm();
-        StartCoroutine(harmCoroutine);
+        Say(_screamClip);
+        if (_harmCoroutine != null)
+            StopCoroutine(_harmCoroutine);
+        _harmCoroutine = Harm();
+        StartCoroutine(_harmCoroutine);
     }
 
-    IEnumerator DisableBomb()
+    private IEnumerator DisableBomb()
     {
-        bombAvailable = false;
-        bombRestoreIndicator.fillAmount = 0;
+        _bombAvailable = false;
+        _bombRestoreIndicator.fillAmount = 0;
         for (var i = 0; i < 100; i += 5)
         {
-            yield return new WaitForSeconds(bombRestoreTime/20);
-            bombRestoreIndicator.fillAmount += 0.05f;
+            yield return new WaitForSeconds(_bombRestoreTime/20);
+            _bombRestoreIndicator.fillAmount += 0.05f;
         }
-        bombAvailable = true;
+        _bombAvailable = true;
     }
 
-    IEnumerator Harm()
+    private IEnumerator Harm()
     {
-        isHarmed = true;
-        harmIndicator.fillAmount = 1;
+        _isHarmed = true;
+        _harmIndicator.fillAmount = 1;
         for (var i = 0; i < 100; i += 5)
         {
-            yield return new WaitForSeconds(harmTime/20);
-            harmIndicator.fillAmount -= 0.05f;
+            yield return new WaitForSeconds(_harmTime/20);
+            _harmIndicator.fillAmount -= 0.05f;
         }
-        isHarmed = false;
+        _isHarmed = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Bomb")
+        if (collision.gameObject.TryGetComponent<Bomb>(out _))
         {
             GetHarm();
         }
@@ -90,11 +83,11 @@ public class Player : Entity
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Boss")
+        if (collision.gameObject.TryGetComponent<Farmer>(out _))
         {
-            endWindow.EndGame(false);
+            _endWindow.EndGame(false);
         }
-        if (collision.gameObject.tag == "Dog")
+        if (collision.gameObject.TryGetComponent<Dog>(out _))
         {
             GetHold();            
         }
@@ -102,20 +95,20 @@ public class Player : Entity
 
     public void GetHold()
     {
-        audioSource.PlayOneShot(screamClip);
+        Say(_screamClip);
+        StopAllCoroutines();
         StartCoroutine(Hold());
     }
 
-   IEnumerator Hold()
+   private IEnumerator Hold()
     {
-        isHold = true;
-        holdIndicator.fillAmount = 1;
+        _isHolding = true;
+        _holdIndicator.fillAmount = 1;
         for (var i = 0; i < 100; i += 5)
         {
-            yield return new WaitForSeconds(holdTime / 20);
-            holdIndicator.fillAmount -= 0.05f;
+            yield return new WaitForSeconds(_holdTime / 20);
+            _holdIndicator.fillAmount -= 0.05f;
         }
-        isHold = false;
+        _isHolding = false;
     }
-
 }

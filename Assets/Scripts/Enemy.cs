@@ -1,41 +1,50 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class Enemy : Entity
 {
-
-    public Sprite DirtyRightSprite;
-    public Sprite DirtyLeftSprite;
-    public Sprite DirtyUpSprite;
-    public Sprite DirtyDownSprite;
-
-    protected Vector3 moveDirection { get; set; }
-    protected bool isMoving { get; set; }
-    protected bool isDirty { get; set; }
-    protected IEnumerator moveCoroutine { set; get; }
+    [SerializeField] private Sprite _dirtyRightSprite;
+    [SerializeField] private Sprite _dirtyLeftSprite;
+    [SerializeField] private Sprite _dirtyUpSprite;
+    [SerializeField] private Sprite _dirtyDownSprite;
+    protected Vector3 MoveDirection { get; set; }
+    protected bool IsMoving { get; set; }
+    protected bool IsDirty { get; set; }
+    protected IEnumerator MoveCoroutine { set; get; }
 
     protected readonly float dirtyTime = 3f;
-
-    protected virtual float CurrentSpeed
+    protected override float CurrentSpeed
     {
         get
         {
-            if (isDirty)
+            if (IsDirty)
                 return 0;
-
             return 5;
         }
     }
 
+    public override void SetLook(Vector3 direction)
+    {
+        if (IsDirty)
+            SetDirty(direction);
+        else
+            SetNormal(direction);
+    }
 
-    // Update is called once per frame
+    private bool Stopped()
+    {
+        return Time.timeScale == 0 || IsDirty;
+    }
+
+
     protected virtual void Update()
     {
-        if (isMoving)
+        if (Stopped())
+            return;
+        if (IsMoving)
         {
-            MoveBy(CurrentSpeed * Time.deltaTime * moveDirection);
+            if (!TryMoveTo(MoveDirection))
+                MoveDirection *= -1;
         }
         else
         {
@@ -43,26 +52,24 @@ public class Enemy : Entity
         }
     }
 
-
-
-    protected void SetDirty()
+    protected void SetDirty(Vector3 direction)
     {
-        SetLook(moveDirection, DirtyRightSprite, DirtyLeftSprite, DirtyUpSprite, DirtyDownSprite);
+        SetLook(direction, _dirtyRightSprite,_dirtyLeftSprite,_dirtyUpSprite,_dirtyDownSprite);
     }
 
-    protected void SetNormal()
+    protected void SetNormal(Vector3 direction)
     {
-        SetLook(moveDirection);
+        base.SetLook(direction);
     }
 
     protected virtual void SetClean()
     {
-        SetNormal();
+        SetNormal(MoveDirection);
     }
-
-    private Vector3 getRandomDirection()
+ 
+    private Vector3 GetRandomDirection()
     {
-        var rand = Mathf.RoundToInt(Random.Range(1, 5));
+        var rand = Random.Range(1, 5);
         switch (rand)
         {
             case 1:
@@ -80,75 +87,66 @@ public class Enemy : Entity
 
     protected void StartMoveRandom()
     {
-        changeMoveDirection(getRandomDirection());
+        ChangeMoveDirection(GetRandomDirection());
     }
 
-    protected void StartMoveRandom(Vector3 foorbiddenDirection)
+    protected void StartMoveRandom(Vector3 forbiddenDirection)
     {
         Vector3 nextDirection;
         do
         {
-            nextDirection = getRandomDirection();
+            nextDirection = GetRandomDirection();
         }
-        while (nextDirection == foorbiddenDirection);
-        changeMoveDirection(nextDirection);
+        while (nextDirection == forbiddenDirection);
+        ChangeMoveDirection(nextDirection);
     }
 
-    private void changeMoveDirection(Vector3 nextDirection)
+    private void ChangeMoveDirection(Vector3 nextDirection)
     {
-        if (moveCoroutine != null)
-            StopCoroutine(moveCoroutine);
-        if (nextDirection != moveDirection)
+        if (MoveCoroutine != null)
+            StopCoroutine(MoveCoroutine);
+        if (nextDirection != MoveDirection)
         {
             Rotate(nextDirection);
         }
 
-        moveDirection = nextDirection;
+        MoveDirection = nextDirection;
 
         var timeMoving = Random.Range(1, 3);
 
-        moveCoroutine = MoveForSeconds(timeMoving);
-        StartCoroutine(moveCoroutine);
+        MoveCoroutine = MoveForSeconds(timeMoving);
+        StartCoroutine(MoveCoroutine);
     }
 
-    IEnumerator MoveForSeconds(int timeWait)
+    private IEnumerator MoveForSeconds(int timeWait)
     {
-        isMoving = true;
+        IsMoving = true;
         yield return new WaitForSeconds(timeWait);
-        isMoving = false;
+        IsMoving = false;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
-        if (moveCoroutine != null)
-            StopCoroutine(moveCoroutine);
-        if (collision.gameObject.tag == "EdgeOfMap")
-        {
-            changeMoveDirection(moveDirection * -1);        //Если упираемся в стену, разворачиваемся
-        }
-        else
-        {
-            StartMoveRandom(moveDirection);                //Если упираемся во что-то другое, меняем направление на любое кроме текущего
+        if (MoveCoroutine != null)
+            StopCoroutine(MoveCoroutine);
+        StartMoveRandom(forbiddenDirection: MoveDirection);     //Если упираемся во что-то, меняем направление на любое кроме текущего
     }
-}
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Bomb")
+        if (collision.gameObject.TryGetComponent<Bomb>(out _))
         {
-            StopCoroutine(moveCoroutine);
+            StopCoroutine(MoveCoroutine);
             StartCoroutine(BeDirty());
         }
     }
 
     protected IEnumerator BeDirty()
     {
-        isDirty = true;
-        SetDirty();
+        IsDirty = true;
+        SetDirty(MoveDirection);
         yield return new WaitForSeconds(dirtyTime);
         SetClean();
-        isDirty = false;
+        IsDirty = false;
     }
-
-
 }

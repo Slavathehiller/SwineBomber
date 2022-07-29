@@ -110,7 +110,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3, y: 3}
+  m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &4202665784078104616
 MonoBehaviour:
@@ -124,9 +124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a72e20608423c24089b64670fd84ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnClip: {fileID: 8300000, guid: c2d82d8ae384a6845a1ec1c1eaf220dc, type: 3}
-  boomClip: {fileID: 8300000, guid: 05e908b80a5ff8c4daecae6b41f5966c, type: 3}
-  settingClip: {fileID: 8300000, guid: aec6b245fb4fa6246bbc4c2018cf9023, type: 3}
+  _burnClip: {fileID: 8300000, guid: c2d82d8ae384a6845a1ec1c1eaf220dc, type: 3}
+  _boomClip: {fileID: 8300000, guid: 05e908b80a5ff8c4daecae6b41f5966c, type: 3}
+  _settingClip: {fileID: 8300000, guid: aec6b245fb4fa6246bbc4c2018cf9023, type: 3}
 --- !u!95 &1117096711056869081
 Animator:
   serializedVersion: 3

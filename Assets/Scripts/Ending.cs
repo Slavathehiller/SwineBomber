@@ -1,52 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Ending : MonoBehaviour
 {
-    public Image WinImage;
-    public Image LoseImage;
-
-    private AudioSource audioSource;
-    public AudioClip winClip;
-    public AudioClip loseClip;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    [SerializeField] private Image _winImage;
+    [SerializeField] private Image _loseImage;
+    [SerializeField] private AudioClip _winClip;
+    [SerializeField] private AudioClip _loseClip;
+    private AudioSource _audioSource;
     public void EndGame(bool weWin)
     {
         gameObject.SetActive(true);
-        audioSource = GetComponent<AudioSource>();
-        WinImage.enabled = weWin;
-        LoseImage.enabled = !weWin;
+        _audioSource = GetComponent<AudioSource>();
+        _winImage.enabled = weWin;
+        _loseImage.enabled = !weWin;
         if (weWin)
-            audioSource.PlayOneShot(winClip);
+            _audioSource.PlayOneShot(_winClip);
         else
-            audioSource.PlayOneShot(loseClip);
+            _audioSource.PlayOneShot(_loseClip);
         Time.timeScale = 0;
     }
 
     public void Restart()
     {
-        SceneManager.LoadScene(0);
         Time.timeScale = 1;
+        SceneManager.LoadScene(0);
     }
 
     public void Exit()
     {
         Application.Quit();
     }
-
 }

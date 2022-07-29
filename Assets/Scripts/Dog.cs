@@ -1,35 +1,31 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Dog : Enemy
 {
+    [SerializeField] private AudioClip _barking;
+    [SerializeField] private AudioClip _growl;
+    private bool _isHolding;
+    private float _holdTime = 4f;
 
-    private bool isHold;
-    private float holdTime = 4f;
-    public AudioClip barking;
-    public AudioClip growl;
-
-    // Update is called once per frame
     protected override void Update()
     {
-        if (!isHold)
+        if (!_isHolding)
             base.Update();
     }
 
     private void FixedUpdate()
     {
-        if (Random.Range(0, 500) == 0 && !isHold)
-            audioSource.PlayOneShot(barking);
+        if (Random.Range(0, 500) == 0 && !_isHolding)
+            Say(_barking);
     }
 
     protected override float CurrentSpeed
     {
         get
         {
-            if (isDirty || isHold)
+            if (IsDirty || _isHolding)
                 return 0;
 
             return 5;
@@ -38,7 +34,7 @@ public class Dog : Enemy
 
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.TryGetComponent<Player>(out _))
         {
             GetHold();
         }
@@ -48,14 +44,14 @@ public class Dog : Enemy
 
     private void GetHold()
     {
-        audioSource.PlayOneShot(growl);
+        Say(_growl);
         StartCoroutine(Hold());
     }
 
-    IEnumerator Hold()
+    private IEnumerator Hold()
     {
-        isHold = true;
-        yield return new WaitForSeconds(holdTime);
-        isHold = false;
+        _isHolding = true;
+        yield return new WaitForSeconds(_holdTime);
+        _isHolding = false;
     }
 }
